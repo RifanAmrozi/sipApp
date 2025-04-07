@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Biodata is for saving data from Biodata Page
 class Biodata {
     var name: String
     var weight: Int
@@ -42,3 +43,4 @@ class Preferences {
         self.isRecurring = isRecurring
     }
 }
+
