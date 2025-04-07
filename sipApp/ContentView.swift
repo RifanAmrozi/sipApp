@@ -11,13 +11,12 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(red: 1.0, green: 0.94, blue: 0.84).edgesIgnoringSafeArea(.all) // Background
+                Color(red: 1.0, green: 0.94, blue: 0.84)
+                    .ignoresSafeArea(.all)
                 WaterGlassView()
                 
             }
-            .padding()
             .toolbarBackground(Color(red: 1.0, green: 0.94, blue: 0.84), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     VStack{
