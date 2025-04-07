@@ -41,7 +41,7 @@ struct ContentView: View {
 
 struct WaterGlassView: View {
     @State private var waveOffset: CGFloat = 0.0
-    @State private var waterLevelOffset: CGFloat = -30 // Starts at 0
+    @State private var waterLevelOffset: CGFloat = 0 // Starts at 0
     
     var body: some View {
         ZStack {
@@ -61,11 +61,11 @@ struct WaterGlassView: View {
                     // Water Shape with Animation
                     WaterShape(offset: waveOffset)
                         .fill(LinearGradient(
-                            gradient: Gradient(colors: [Color.blue.opacity(0.5), Color.blue.opacity(0.8)]),
+                            gradient: Gradient(colors: [Color("WaterBlue").opacity(0.5), Color("WaterBlue").opacity(0.8)]),
                             startPoint: .top,
                             endPoint: .bottom
                         ))
-                        .frame(width: 140, height: 150)
+                        .frame(width: 140, height: 250)
                         .offset(y: waterLevelOffset)
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
@@ -74,7 +74,7 @@ struct WaterGlassView: View {
                 
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.blue.opacity(1))
+                        .fill(Color("WaterBlue"))
                         .frame(width:100, height: 65)
                     Text("Sip!")
                         .bold(true)
@@ -84,8 +84,8 @@ struct WaterGlassView: View {
                     // Increase water level (move up to 80)
                     withAnimation {
                         waterLevelOffset += 10
-                        if waterLevelOffset >= 80 {
-                            waterLevelOffset = 80
+                        if waterLevelOffset > 100 {
+                            waterLevelOffset = 110
                         }
                     }
                 }
