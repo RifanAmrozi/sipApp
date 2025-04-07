@@ -44,3 +44,12 @@ class Preferences {
     }
 }
 
+class BackendDate {
+    var Biodata: Biodata
+    var Preferences: Preferences
+    
+    init(Biodata: Biodata, Preferences: Preferences) {
+        self.Biodata = Biodata
+        self.Preferences = Preferences
+    }
+}
