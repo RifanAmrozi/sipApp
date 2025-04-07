@@ -8,6 +8,9 @@ DerivedData/
 *.moved-aside
 *.xccheckout
 *.xcodeproj/project.xcworkspace/
+*.xcuserdatad/
+*.xcscmblueprint
+
 
 # Swift Package Manager
 .swiftpm
