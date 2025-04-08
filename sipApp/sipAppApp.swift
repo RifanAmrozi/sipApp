@@ -9,9 +9,14 @@ import SwiftUI
 
 @main
 struct sipAppApp: App {
+    @StateObject var timerManager = TimerManager()
+    @StateObject private var viewModel = GoalViewModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(timerManager)
+                .environmentObject(viewModel)
         }
     }
 }
