@@ -14,19 +14,23 @@ struct BiodataView: View {
     @State var selectedGender: String
     @State var fasting: Bool
     
+    @State var biodata: Biodata
+    
     @State var showModal = false
+    
+    let genders = ["Not Set", "Male", "Female"]
     
     var body: some View {
         NavigationStack{
             VStack{
-                List{
+                Form{
                     Section{
                         HStack{
                             Text("Name")
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                TextField("Not Set", text: $name)
+                                TextField("\(biodata.name)", text: $name)
                                     .frame(width: 200, height: 10)
                                     .multilineTextAlignment(.trailing)
                                     .foregroundColor(.gray)
@@ -37,7 +41,7 @@ struct BiodataView: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                TextField("", text: $weight)
+                                TextField("\(biodata.weight)", text: $weight)
                                     .frame(width: 50, height: 10)
                                     .multilineTextAlignment(.trailing)
                                     .foregroundColor(.gray)
@@ -48,12 +52,10 @@ struct BiodataView: View {
                             Text("Age")
                                 .foregroundColor(.gray)
                             Spacer()
-                            VStack{
-                                TextField("", text: $age)
-                                    .frame(width: 200, height: 10)
-                                    .multilineTextAlignment(.trailing)
-                                    .foregroundColor(.gray)
-                            }
+                            TextField("\(biodata.age)", text: $age)
+                                .frame(width: 200, height: 10)
+                                .multilineTextAlignment(.trailing)
+                                .foregroundColor(.gray)
                             Text("yrs")
                         }
                         HStack{
@@ -61,9 +63,10 @@ struct BiodataView: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                Picker("", selection: $selectedGender){
-                                    Text("Male").tag("Male")
-                                    Text("Female").tag("Female")
+                                Picker("", selection: $biodata.gender){
+                                    ForEach(genders, id: \.self){
+                                        Text($0)
+                                    }
                                 }
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.gray)
@@ -75,7 +78,7 @@ struct BiodataView: View {
                             Text("Fasting")
                                 .foregroundColor(.gray)
                             Spacer()
-                            Toggle("", isOn: $fasting)
+                            Toggle("", isOn: $biodata.isFasting)
                                 .toggleStyle(SwitchToggleStyle(tint: .cyan))
                         }
                     }
@@ -84,6 +87,7 @@ struct BiodataView: View {
                             Spacer()
                             Button {
                                 showModal = true
+                                print("\(name) \(weight) \(age) \(fasting) \(selectedGender)")
                             } label: {
                                 Text("Save")
                                     .fontWeight(.bold)
@@ -91,7 +95,6 @@ struct BiodataView: View {
                                     .frame(width: 100, height: 45, alignment: .center)
                                     .background(Color("WaterBlue"))
                                     .cornerRadius(8)
-                                    .padding(.top, 330)
                             }
                             .sheet(isPresented: $showModal) {
                                 ZStack{
@@ -153,6 +156,7 @@ struct BiodataView: View {
                                     }
                                     VStack{
                                         Text("That's equivalent to")
+                                            .fontWeight(.bold)
                                             .padding(.top, 30)
                                             .foregroundStyle(Color.white)
                                         HStack{
@@ -172,8 +176,8 @@ struct BiodataView: View {
                                         Text("👍  Sip!")
                                     }
                                     .fontWeight(.bold)
-                                    .font(.title)
-                                    .frame(width: 150, height: 35)
+                                    .font(.system(size: 20))
+                                    .frame(width: 100, height: 20)
                                     .padding()
                                     .background(Color.white)
                                     .foregroundStyle(Color("WaterBlue"))
@@ -189,6 +193,7 @@ struct BiodataView: View {
                     .foregroundStyle(Color.white)
                     
                 }
+                .listSectionSpacing(350)
                 .background(Color("BackgroundYellow"))
                 .scrollContentBackground(.hidden)
                 .toolbar {
@@ -207,5 +212,5 @@ struct BiodataView: View {
 }
 
 #Preview {
-    BiodataView(name: "", weight: "", age: "", selectedGender: "", fasting: false)
+    BiodataView(name: "", weight: "", age: "", selectedGender: "", fasting: false, biodata: Biodata())
 }
