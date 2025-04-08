@@ -6,16 +6,20 @@
 //
 
 import SwiftUI
+import Foundation
+import Combine
 
 
 struct ContentView: View {
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Color("BackgroundYellow")
                     .ignoresSafeArea(.all)
                 WaterGlassView()
-                
+                TimerView()
+                GoalView()
             }
             .toolbarBackground(Color("BackgroundYellow"), for: .navigationBar)
             .toolbar {
@@ -116,6 +120,8 @@ struct Trapezium: Shape {
 struct WaterGlassView: View {
     @State private var waveOffset: CGFloat = 0.0
     @State private var waterLevelOffset: CGFloat = 30 // default starts at 30 to add space top
+    @EnvironmentObject var timerManager: TimerManager
+    @EnvironmentObject var viewModel: GoalViewModel
     
     var body: some View {
         ZStack {
@@ -165,6 +171,8 @@ struct WaterGlassView: View {
                             waterLevelOffset = 280
                         }
                     }
+                    timerManager.startCountdown()
+                    viewModel.addProgress()
                 }
                 Spacer()
             }
@@ -210,8 +218,82 @@ struct WaterShape: Shape {
     }
 }
 
+struct TimerView: View {
+    @EnvironmentObject var timerManager: TimerManager  // Shared manager
 
+       var body: some View {
+           VStack(spacing: 20) {
+               Text(formatTime(timerManager.timeRemaining))  // Reacts to updates
+                   .font(.largeTitle)
+                   .bold()
+                   .foregroundColor(Color("DeepWaterBlue"))
+               Spacer()
+           }
+       }
+
+       func formatTime(_ seconds: Int) -> String {
+           let formatter = DateComponentsFormatter()
+           formatter.allowedUnits = [.hour, .minute, .second]
+           formatter.zeroFormattingBehavior = [.pad]
+           return formatter.string(from: TimeInterval(seconds)) ?? "00:00:00"
+       }
+}
+
+struct GoalView: View {
+    @EnvironmentObject var viewModel: GoalViewModel
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("\(viewModel.currentProgress) / \(viewModel.goalTarget)")
+                .font(.subheadline)
+                .bold()
+                .foregroundColor(Color("DeepWaterBlue"))
+            }
+        .padding()
+    }
+}
+
+class TimerManager: ObservableObject {
+    @Published var timeRemaining: Int = 10800
+    private var timer: Timer?
+
+    func startCountdown() {
+        timer?.invalidate()
+        timeRemaining = 10800
+
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+            } else {
+                self.timer?.invalidate()
+            }
+        }
+    }
+
+    func stopCountdown() {
+        timer?.invalidate()
+    }
+}
+
+class GoalViewModel: ObservableObject {
+    @Published var intervalProgress: Int = 300
+    @Published var currentProgress: Int = 0
+    @Published var goalTarget: Int = 2700
+
+    func addProgress() {
+        if currentProgress < goalTarget {
+            currentProgress += intervalProgress
+        }
+    }
+
+    func resetProgress() {
+        currentProgress = 0
+    }
+}
 
 #Preview {
     ContentView()
+        .environmentObject(TimerManager())
+        .environmentObject(GoalViewModel())
 }
