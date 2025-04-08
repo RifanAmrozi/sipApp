@@ -44,7 +44,7 @@ class Preferences {
     }
 }
 
-class BackendDate {
+class BackendData {
     var Biodata: Biodata
     var Preferences: Preferences
     
