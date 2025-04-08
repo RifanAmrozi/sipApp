@@ -5,43 +5,27 @@
 //  Created by Keinan Wardhana on 07/04/25.
 //
 
-import Foundation
+import SwiftUI
 
 // Biodata is for saving data from Biodata Page
+@Observable
 class Biodata {
-    var name: String
-    var weight: Int
-    var age: Int
-    var gender: String
-    var isFasting: Bool
-    
-    init(name: String, weight: Int, age: Int, gender: String, isFasting: Bool) {
-        self.name = name
-        self.weight = weight
-        self.age = age
-        self.gender = gender
-        self.isFasting = isFasting
-    }
+    var name = "Not Set"
+    var weight = 0
+    var age = 0
+    var gender = "Not Set"
+    var isFasting = false
 }
 
+@Observable
 class Preferences {
-    var interval: Int
-    var startActive: String
-    var endActive: String
-    var unit: String
-    var intakeGoal: Int
-    var isSoundActive:  Bool
-    var isRecurring: Bool
-    
-    init(interval: Int, startActive: String, endActive: String, unit: String, intakeGoal: Int, isSoundActive: Bool, isRecurring: Bool) {
-        self.interval = interval
-        self.startActive = startActive
-        self.endActive = endActive
-        self.unit = unit
-        self.intakeGoal = intakeGoal
-        self.isSoundActive = isSoundActive
-        self.isRecurring = isRecurring
-    }
+    var interval = 0
+    var startActive = "2025-04-08 08:31:00 +0000"
+    var endActive = "2025-04-08 10:31:00 +0000"
+    var unit = "kg/mL"
+    var waterIntake = 0
+    var isSoundActive = false
+    var isRecurring = false
 }
 
 class BackendDate {
