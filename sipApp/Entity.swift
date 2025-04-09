@@ -23,13 +23,13 @@ class Preferences: ObservableObject {
     @Published var startActive = Date.now
     @Published var endActive = Date.now
     @Published var unit = "kg/mL"
-    @Published var waterIntake = 0
+    @Published var waterIntake = 10
     @Published var isSoundActive = false
     @Published var isRecurring = false
     
-    @Published var activeDuration = 0
+    @Published var activeDuration = 1
     @Published var sipCapacity = 0.0
-    @Published var sipCapacityGlass = 0.0
+    @Published var sipCapacityGlass = 0.00
 }
 //
 //class BackendData {

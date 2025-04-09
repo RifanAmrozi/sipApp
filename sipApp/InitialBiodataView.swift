@@ -18,7 +18,7 @@ struct InitialBiodataView: View {
     @State var fasting: Bool
     
     @State var showModal = false
-    
+    @State var moveToPreferences = false
     
     let genders = ["Not Set", "Male", "Female"]
     
@@ -86,7 +86,18 @@ struct InitialBiodataView: View {
                     }
                     Section{
                         HStack{
-                            NavigationLink(destination: InitialPreferencesView(biodata: biodata, preferences: preferences)) {
+                            Button{
+                                moveToPreferences = true
+                                biodata.name = name
+                                biodata.weight = weight
+                                biodata.age = age
+                                biodata.gender = selectedGender
+                                biodata.isFasting = fasting
+                                
+                                preferences.waterIntake = biodata.weight * 30
+                                
+                                print("\(biodata.name) \(weight) \(age) \(fasting) \(selectedGender)")
+                            } label: {
                                 Spacer()
                                 Text("Next")
                                     .fontWeight(.bold)
@@ -96,6 +107,14 @@ struct InitialBiodataView: View {
                                     .cornerRadius(8)
                                     .frame(width: 500)
                                 Spacer()
+                            }
+                            .background{
+                                NavigationLink(
+                                    destination: InitialPreferencesView(biodata: biodata, preferences: preferences),
+                                    isActive: $moveToPreferences,
+                                        label: { EmptyView() }
+                                    )
+                                    .hidden()
                             }
                         }
                     }

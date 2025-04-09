@@ -24,7 +24,7 @@ struct BiodataView: View {
     let genders = ["Not Set", "Male", "Female"]
     
     var body: some View {
-        NavigationStack{
+        NavigationStack(){
             VStack{
                 Form{
                     Section{
@@ -66,7 +66,7 @@ struct BiodataView: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                Picker("", selection: $biodata.gender){
+                                Picker("", selection: $selectedGender){
                                     ForEach(genders, id: \.self){
                                         Text($0)
                                     }
@@ -81,7 +81,7 @@ struct BiodataView: View {
                             Text("Fasting")
                                 .foregroundColor(.gray)
                             Spacer()
-                            Toggle("", isOn: $biodata.isFasting)
+                            Toggle("", isOn: $fasting)
                                 .toggleStyle(SwitchToggleStyle(tint: .cyan))
                         }
                     }
@@ -119,7 +119,7 @@ struct BiodataView: View {
                                         .ignoresSafeArea()
                                 VStack {
                                     
-                                    ModalView()
+                                    ModalView(biodata: biodata, preferences: preferences)
                                         .frame(height: 600)
                                     
                                     Button {

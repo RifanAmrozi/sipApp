@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct InitialPreferencesView: View {
     @State var biodata = Biodata()
@@ -18,8 +19,10 @@ struct InitialPreferencesView: View {
     @State var waterIntake: Int = 0
     @State var sound: Bool = false
     @State var recurring: Bool = false
+    @State var minutes: Int = 0
     
     @State var showModal = false
+    @State var moveToHome = false
     
     let units = ["kg/mL", "lbs/oz"]
     
@@ -32,7 +35,7 @@ struct InitialPreferencesView: View {
                             Text("Interval")
                                 .foregroundColor(.gray)
                             Spacer()
-                            TextField("\(preferences.interval)", value: $interval, format: .number)
+                            TextField("", value: $interval, format: .number)
                                 .frame(width: 200, height: 10)
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.gray)
@@ -56,7 +59,7 @@ struct InitialPreferencesView: View {
                         HStack{
                             Text("Unit")
                                 .foregroundColor(.gray)
-                            Picker("", selection: $preferences.unit) {
+                            Picker("", selection: $unit) {
                                 ForEach(units, id: \.self){
                                     Text($0)
                                 }
@@ -68,7 +71,7 @@ struct InitialPreferencesView: View {
                         HStack{
                             Text("Water Intake")
                                 .foregroundColor(.gray)
-                            TextField("\(biodata.weight * 30)", value: $waterIntake, format: .number)
+                            TextField("", value: $waterIntake, format: .number)
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.gray)
                             Text("mL")
@@ -115,7 +118,19 @@ struct InitialPreferencesView: View {
                                 preferences.isSoundActive = sound
                                 preferences.isRecurring = recurring
                                 
-                                print("\(interval) \(initialActiveHours) \(preferences.activeDuration) \(finalActiveHours) \(unit) \(waterIntake) \(sound) \(recurring)")
+                                let calendar = Calendar.current
+                                let activeMinutes = calendar.dateComponents([.minute], from: initialActiveHours, to: finalActiveHours).minute ?? 0
+                                
+                                preferences.activeDuration = activeMinutes
+                                
+                                
+                                preferences.sipCapacity = (Double(preferences.interval) / Double(preferences.activeDuration)) * Double(preferences.waterIntake)
+                                
+                                if (preferences.unit == "kg/mL"){
+                                    preferences.sipCapacityGlass = preferences.sipCapacity / 240
+                                }
+                                
+                                print("\(biodata.name) \(interval) \(initialActiveHours) \(preferences.activeDuration) \(finalActiveHours) \(unit) \(waterIntake) \(sound) \(preferences.sipCapacityGlass)")
                             } label: {
                                 Text("Save")
                                     .fontWeight(.bold)
@@ -134,9 +149,18 @@ struct InitialPreferencesView: View {
                                         .frame(height: 600)
                                     
                                     Button {
+                                        moveToHome = true
                                         showModal = false
                                     } label: {
                                         Text("👍  Sip!")
+                                    }
+                                    .background{
+                                        NavigationLink(
+                                            destination: ContentView(biodata: biodata, preferences: preferences),
+                                            isActive: $moveToHome,
+                                                label: { EmptyView() }
+                                            )
+                                            .hidden()
                                     }
                                     .fontWeight(.bold)
                                     .font(.system(size: 20))
@@ -171,6 +195,11 @@ struct InitialPreferencesView: View {
                 }
                 
             }
+        }
+        .onAppear{
+            interval = preferences.interval
+            waterIntake = preferences.waterIntake
+            unit = preferences.unit
         }
         .background(.gray)
     }

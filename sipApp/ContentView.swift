@@ -13,6 +13,8 @@ import Combine
 struct ContentView: View {
     
     @State private var showModal = false
+    @State var biodata = Biodata()
+    @State var preferences = Preferences()
     
     var body: some View {
         NavigationStack {
@@ -279,7 +281,7 @@ class TimerManager: ObservableObject {
 
     func startCountdown() {
         timer?.invalidate()
-        timeRemaining = 10800
+        timeRemaining = 10800 // To do: ganti preferences.interval
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
