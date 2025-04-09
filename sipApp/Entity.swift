@@ -8,32 +8,36 @@
 import SwiftUI
 
 // Biodata is for saving data from Biodata Page
-@Observable
-class Biodata {
+//@Observable
+class Biodata: ObservableObject {
     var name = "Not Set"
-    var weight = 0
-    var age = 0
-    var gender = "Not Set"
-    var isFasting = false
+    @Published var weight = 0
+    @Published var age = 0
+    @Published var gender = ""
+    @Published var isFasting = false
 }
 
-@Observable
-class Preferences {
-    var interval = 0
-    var startActive = "2025-04-08 08:31:00 +0000"
-    var endActive = "2025-04-08 10:31:00 +0000"
-    var unit = "kg/mL"
-    var waterIntake = 0
-    var isSoundActive = false
-    var isRecurring = false
-}
-
-class BackendData {
-    var Biodata: Biodata
-    var Preferences: Preferences
+//@Observable
+class Preferences: ObservableObject {
+    @Published var interval = 0
+    @Published var startActive = Date.now
+    @Published var endActive = Date.now
+    @Published var unit = "kg/mL"
+    @Published var waterIntake = 0
+    @Published var isSoundActive = false
+    @Published var isRecurring = false
     
-    init(Biodata: Biodata, Preferences: Preferences) {
-        self.Biodata = Biodata
-        self.Preferences = Preferences
-    }
+    @Published var activeDuration = 0
+    @Published var sipCapacity = 0.0
+    @Published var sipCapacityGlass = 0.0
 }
+//
+//class BackendData {
+//    var Biodata: Biodata
+//    var Preferences: Preferences
+//    
+//    init(Biodata: Biodata, Preferences: Preferences) {
+//        self.Biodata = Biodata
+//        self.Preferences = Preferences
+//    }
+//}

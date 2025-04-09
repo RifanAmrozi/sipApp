@@ -7,21 +7,19 @@
 
 import SwiftUI
 
-struct BiodataView: View {
+struct InitialBiodataView: View {
+    @State var biodata = Biodata()
+    @State var preferences = Preferences()
+    
     @State var name: String
     @State var weight: Int
     @State var age: Int
     @State var selectedGender: String
     @State var fasting: Bool
     
-    @State var biodata = Biodata()
-    @State var preferences = Preferences()
-    
     @State var showModal = false
     
-    @Environment(\.presentationMode) var presentationMode
-    @State var showDiscardAlert = false
-    @State var hasUnsavedChanges = true
+    
     let genders = ["Not Set", "Male", "Female"]
     
     var body: some View {
@@ -67,7 +65,7 @@ struct BiodataView: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                Picker("", selection: $biodata.gender){
+                                Picker("", selection: $selectedGender){
                                     ForEach(genders, id: \.self){
                                         Text($0)
                                     }
@@ -82,62 +80,23 @@ struct BiodataView: View {
                             Text("Fasting")
                                 .foregroundColor(.gray)
                             Spacer()
-                            Toggle("", isOn: $biodata.isFasting)
+                            Toggle("", isOn: $fasting)
                                 .toggleStyle(SwitchToggleStyle(tint: .cyan))
                         }
                     }
                     Section{
                         HStack{
-                            Spacer()
-                            Button {
-                                showModal = true
-                                biodata.name = name
-                                biodata.weight = weight
-                                biodata.age = age
-                                biodata.gender = selectedGender
-                                biodata.isFasting = fasting
-                                
-                                preferences.waterIntake = biodata.weight * 30
-                                preferences.sipCapacity = (Double(preferences.interval) / Double(preferences.activeDuration)) * Double(preferences.waterIntake)
-                                
-                                if (preferences.unit == "kg/mL"){
-                                    preferences.sipCapacityGlass = Double(preferences.sipCapacity) / 240
-                                }
-                                
-                                print("\(name) \(weight) \(age) \(fasting) \(selectedGender)")
-                            } label: {
-                                Text("Save")
+                            NavigationLink(destination: InitialPreferencesView(biodata: biodata, preferences: preferences)) {
+                                Spacer()
+                                Text("Next")
                                     .fontWeight(.bold)
                                     .font(.callout)
                                     .frame(width: 100, height: 45, alignment: .center)
                                     .background(Color("WaterBlue"))
                                     .cornerRadius(8)
+                                    .frame(width: 500)
+                                Spacer()
                             }
-                            .sheet(isPresented: $showModal) {
-                                ZStack{
-                                    Color("WaterBlue")
-                                        .ignoresSafeArea()
-                                VStack {
-                                    
-                                    ModalView()
-                                        .frame(height: 600)
-                                    
-                                    Button {
-                                        showModal = false
-                                    } label: {
-                                        Text("👍  Sip!")
-                                    }
-                                    .fontWeight(.bold)
-                                    .font(.system(size: 20))
-                                    .frame(width: 100, height: 20)
-                                    .padding()
-                                    .background(Color.white)
-                                    .foregroundStyle(Color("WaterBlue"))
-                                    .cornerRadius(15)
-                                    }
-                                }
-                            }
-                            Spacer()
                         }
                     }
                     .listRowBackground(Color("WaterBlue").opacity(0))
@@ -148,21 +107,6 @@ struct BiodataView: View {
                 .background(Color("BackgroundYellow"))
                 .scrollContentBackground(.hidden)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            if hasUnsavedChanges {
-                                showDiscardAlert = true
-                            } else {
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                        }) {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                Text("Back")
-                            }
-                        }
-                    }
-                    
                     ToolbarItem(placement: .principal) {
                         Text("Biodata")
                             .font(.title)
@@ -171,17 +115,12 @@ struct BiodataView: View {
                             .padding(.top, 50)
                     }
                 }
-                .alert("Discard unsaved changes?", isPresented: $showDiscardAlert) {
-                    Button("Cancel", role: .cancel) {}
-                    Button("Discard", role: .destructive) {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }
+
             }
         }
     }
 }
 
 #Preview {
-    BiodataView(name: "", weight: 0, age: 0, selectedGender: "", fasting: false)
+    InitialBiodataView(name: "", weight: 0, age: 0, selectedGender: "Not Set", fasting: false)
 }
