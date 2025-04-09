@@ -20,7 +20,8 @@ struct PreferencesView: View {
     
     @State var showModal = false
     
-    @Environment(\.presentationMode) var presentationMode
+//    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
     @State private var showDiscardAlert = false
     @State private var hasUnsavedChanges = true
     
@@ -111,7 +112,7 @@ struct PreferencesView: View {
                             Spacer()
                             Button {
                                 showModal = true
-                                
+                                hasUnsavedChanges = false
                                 preferences.interval = interval
                                 preferences.unit = unit
                                 preferences.waterIntake = waterIntake
@@ -162,13 +163,14 @@ struct PreferencesView: View {
                 .listSectionSpacing(50)
                 .background(Color("BackgroundYellow"))
                 .scrollContentBackground(.hidden)
+                .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
                             if hasUnsavedChanges {
                                 showDiscardAlert = true
                             } else {
-                                presentationMode.wrappedValue.dismiss()
+                                dismiss()
                             }
                         }) {
                             HStack {
@@ -189,7 +191,7 @@ struct PreferencesView: View {
                 .alert("Discard unsaved changes?", isPresented: $showDiscardAlert) {
                     Button("Cancel", role: .cancel) {}
                     Button("Discard", role: .destructive) {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }

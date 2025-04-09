@@ -13,15 +13,14 @@ struct BiodataView: View {
     @State var age: Int
     @State var selectedGender: String
     @State var fasting: Bool
-    
+    @State var showModal = false
     @State var biodata = Biodata()
     @State var preferences = Preferences()
     
-    @State var showModal = false
-    
-    @Environment(\.presentationMode) var presentationMode
-    @State var showDiscardAlert = false
-    @State var hasUnsavedChanges = true
+//    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
+    @State private var showDiscardAlert = false
+    @State private var hasUnsavedChanges = true
     let genders = ["Not Set", "Male", "Female"]
     
     var body: some View {
@@ -91,6 +90,7 @@ struct BiodataView: View {
                             Spacer()
                             Button {
                                 showModal = true
+                                hasUnsavedChanges = false
                                 biodata.name = name
                                 biodata.weight = weight
                                 biodata.age = age
@@ -147,13 +147,14 @@ struct BiodataView: View {
                 .listSectionSpacing(350)
                 .background(Color("BackgroundYellow"))
                 .scrollContentBackground(.hidden)
+                .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
                             if hasUnsavedChanges {
                                 showDiscardAlert = true
                             } else {
-                                presentationMode.wrappedValue.dismiss()
+                                dismiss()
                             }
                         }) {
                             HStack {
@@ -174,7 +175,7 @@ struct BiodataView: View {
                 .alert("Discard unsaved changes?", isPresented: $showDiscardAlert) {
                     Button("Cancel", role: .cancel) {}
                     Button("Discard", role: .destructive) {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }

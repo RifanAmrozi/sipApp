@@ -12,7 +12,6 @@ struct ModalView: View {
     @State var biodata = Biodata()
     @State var preferences = Preferences()
     
-    
     var body: some View {
         ZStack{
             Color("WaterBlue")

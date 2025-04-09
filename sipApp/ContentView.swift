@@ -12,6 +12,8 @@ import Combine
 
 struct ContentView: View {
     
+    @State private var showModal = false
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -25,11 +27,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     VStack{
-                        Button(action: {
-                            // TODO: Action for settings button
-                            print("Settings tapped: Show Biodata and Preference")
-                            sendNotification()
-                        }) {
+                        NavigationLink(destination: MenuView()) {
                             Image(systemName: "gearshape")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -37,15 +35,37 @@ struct ContentView: View {
                         }
                         .padding(.top)
                         Button(action: {
-                            // TODO: About button action
-                            print("Start Notifying Every 60s")
-                            requestNotificationPermission()
-                            scheduleNotification()
+                            showModal = true
+                            print("About Clicked")
                         }) {
                             Image(systemName: "questionmark.circle")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 30, height: 30)
+                        }
+                        .sheet(isPresented: $showModal) {
+                            ZStack{
+                                Color("WaterBlue")
+                                    .ignoresSafeArea()
+                            VStack {
+                                
+                                ModalView()
+                                    .frame(height: 600)
+                                
+                                Button {
+                                    showModal = false
+                                } label: {
+                                    Text("👍  Sip!")
+                                }
+                                .fontWeight(.bold)
+                                .font(.system(size: 20))
+                                .frame(width: 100, height: 20)
+                                .padding()
+                                .background(Color.white)
+                                .foregroundStyle(Color("WaterBlue"))
+                                .cornerRadius(15)
+                                }
+                            }
                         }
                     }
                 }
