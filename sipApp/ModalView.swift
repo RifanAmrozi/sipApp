@@ -79,7 +79,7 @@ struct ModalView: View {
                     .foregroundStyle(Color.white)
                 HStack{
                     Image("glassOfWater")
-                    Text(" x \(preferences.sipCapacityGlass, specifier: "%.1f")")
+                    Text(" x \(preferences.sipCapacityGlass, specifier: "%.2f")")
                         .fontWeight(.heavy)
                         .padding(.vertical)
                         .font(.system(size: 44))
