@@ -7,7 +7,10 @@
 
 import SwiftUI
 
-struct PreferencesView: View {
+struct InitialPreferencesView: View {
+    @State var biodata = Biodata()
+    @State var preferences = Preferences()
+    
     @State var interval: Int = 0
     @State var initialActiveHours: Date = Date.now
     @State var finalActiveHours: Date = Date.now
@@ -16,13 +19,7 @@ struct PreferencesView: View {
     @State var sound: Bool = false
     @State var recurring: Bool = false
     
-    @State var preferences = Preferences()
-    
     @State var showModal = false
-    
-    @Environment(\.presentationMode) var presentationMode
-    @State private var showDiscardAlert = false
-    @State private var hasUnsavedChanges = true
     
     let units = ["kg/mL", "lbs/oz"]
     
@@ -71,7 +68,7 @@ struct PreferencesView: View {
                         HStack{
                             Text("Water Intake")
                                 .foregroundColor(.gray)
-                            TextField("\(preferences.waterIntake)", value: $waterIntake, format: .number)
+                            TextField("\(biodata.weight * 30)", value: $waterIntake, format: .number)
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.gray)
                             Text("mL")
@@ -133,7 +130,7 @@ struct PreferencesView: View {
                                         .ignoresSafeArea()
                                 VStack {
                                     
-                                    ModalView()
+                                    ModalView(biodata: biodata, preferences: preferences)
                                         .frame(height: 600)
                                     
                                     Button {
@@ -162,22 +159,8 @@ struct PreferencesView: View {
                 .listSectionSpacing(50)
                 .background(Color("BackgroundYellow"))
                 .scrollContentBackground(.hidden)
+                .safeAreaPadding(.vertical, 5)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            if hasUnsavedChanges {
-                                showDiscardAlert = true
-                            } else {
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                        }) {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                Text("Back")
-                            }
-                        }
-                    }
-                    
                     ToolbarItem(placement: .principal) {
                         Text("Preferences")
                             .font(.title)
@@ -186,12 +169,7 @@ struct PreferencesView: View {
                             .padding(.top, 50)
                     }
                 }
-                .alert("Discard unsaved changes?", isPresented: $showDiscardAlert) {
-                    Button("Cancel", role: .cancel) {}
-                    Button("Discard", role: .destructive) {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }
+                
             }
         }
         .background(.gray)
@@ -199,5 +177,5 @@ struct PreferencesView: View {
 }
 
 #Preview {
-    PreferencesView()
+    InitialPreferencesView()
 }
