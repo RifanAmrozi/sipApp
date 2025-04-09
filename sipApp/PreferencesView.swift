@@ -20,6 +20,10 @@ struct PreferencesView: View {
     
     @State var showModal = false
     
+    @Environment(\.presentationMode) var presentationMode
+    @State private var showDiscardAlert = false
+    @State private var hasUnsavedChanges = true
+    
     let units = ["kg/mL", "lbs/oz"]
     
     var body: some View {
@@ -215,6 +219,21 @@ struct PreferencesView: View {
                 .background(Color("BackgroundYellow"))
                 .scrollContentBackground(.hidden)
                 .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            if hasUnsavedChanges {
+                                showDiscardAlert = true
+                            } else {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                        }
+                    }
+                    
                     ToolbarItem(placement: .principal) {
                         Text("Preferences")
                             .font(.title)
@@ -223,7 +242,12 @@ struct PreferencesView: View {
                             .padding(.top, 50)
                     }
                 }
-                
+                .alert("Discard unsaved changes?", isPresented: $showDiscardAlert) {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Discard", role: .destructive) {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
             }
         }
         .background(.gray)

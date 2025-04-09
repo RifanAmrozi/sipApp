@@ -18,6 +18,9 @@ struct BiodataView: View {
     
     @State var showModal = false
     
+    @Environment(\.presentationMode) var presentationMode
+    @State var showDiscardAlert = false
+    @State var hasUnsavedChanges = true
     let genders = ["Not Set", "Male", "Female"]
     
     var body: some View {
@@ -197,6 +200,21 @@ struct BiodataView: View {
                 .background(Color("BackgroundYellow"))
                 .scrollContentBackground(.hidden)
                 .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            if hasUnsavedChanges {
+                                showDiscardAlert = true
+                            } else {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                        }
+                    }
+                    
                     ToolbarItem(placement: .principal) {
                         Text("Biodata")
                             .font(.title)
@@ -205,7 +223,12 @@ struct BiodataView: View {
                             .padding(.top, 50)
                     }
                 }
-
+                .alert("Discard unsaved changes?", isPresented: $showDiscardAlert) {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Discard", role: .destructive) {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
             }
         }
     }
