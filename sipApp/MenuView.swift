@@ -8,20 +8,22 @@
 import SwiftUI
 
 struct MenuView: View {
+    @State var biodata = Biodata()
+    @State var preferences = Preferences()
+    
     var body: some View {
         NavigationStack{
                 ZStack{
                     Color("BackgroundYellow")
                         .ignoresSafeArea()
                     VStack{
-//                    TODO: Set real data here
-                        NavigationLink(destination: BiodataView(name: "", weight: 0, age: 0, selectedGender: "", fasting: false)){
+                        NavigationLink(destination: BiodataView(biodata: biodata, preferences: preferences)) {
                             VStack{
                                 Text("Biodata")
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
                                     .padding(.bottom, 5)
-                                    
+                                
                                 Text("Edit your personal information for a more up-to-date water intake goal")
                             }
                             .padding(40)
@@ -33,7 +35,8 @@ struct MenuView: View {
                             .multilineTextAlignment(.center)
                         }
                         
-                        NavigationLink(destination: PreferencesView()){
+                        
+                        NavigationLink(destination: PreferencesView(biodata: biodata, preferences: preferences)){
                             VStack{
                                 Text("Preferences")
                                     .font(.largeTitle)
@@ -49,6 +52,7 @@ struct MenuView: View {
                             .cornerRadius(15)
                             .multilineTextAlignment(.center)
                         }
+                        
                     }
                     
                 }
