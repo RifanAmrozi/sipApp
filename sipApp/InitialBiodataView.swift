@@ -11,11 +11,11 @@ struct InitialBiodataView: View {
     @State var biodata = Biodata()
     @State var preferences = Preferences()
     
-    @State var name: String
-    @State var weight: Int
-    @State var age: Int
-    @State var selectedGender: String
-    @State var fasting: Bool
+    @State var name: String = ""
+    @State var weight: Int = 0
+    @State var age: Int = 0
+    @State var selectedGender: String = "Not Set"
+    @State var fasting: Bool = false
     
     @State var showModal = false
     
@@ -122,5 +122,5 @@ struct InitialBiodataView: View {
 }
 
 #Preview {
-    InitialBiodataView(name: "", weight: 0, age: 0, selectedGender: "Not Set", fasting: false)
+    InitialBiodataView()
 }

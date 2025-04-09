@@ -11,6 +11,9 @@ struct InitialPreferencesView: View {
     @State var biodata = Biodata()
     @State var preferences = Preferences()
     
+    @StateObject var timerManager = TimerManager()
+    @StateObject private var viewModel = GoalViewModel()
+    
     @State var interval: Int = 0
     @State var initialActiveHours: Date = Date.now
     @State var finalActiveHours: Date = Date.now
@@ -20,6 +23,7 @@ struct InitialPreferencesView: View {
     @State var recurring: Bool = false
     
     @State var showModal = false
+    @State var moveToHome = false
     
     let units = ["kg/mL", "lbs/oz"]
     
@@ -32,7 +36,7 @@ struct InitialPreferencesView: View {
                             Text("Interval")
                                 .foregroundColor(.gray)
                             Spacer()
-                            TextField("\(preferences.interval)", value: $interval, format: .number)
+                            TextField("", value: $interval, format: .number)
                                 .frame(width: 200, height: 10)
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.gray)
@@ -68,7 +72,7 @@ struct InitialPreferencesView: View {
                         HStack{
                             Text("Water Intake")
                                 .foregroundColor(.gray)
-                            TextField("\(biodata.weight * 30)", value: $waterIntake, format: .number)
+                            TextField("", value: $waterIntake, format: .number)
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.gray)
                             Text("mL")
@@ -103,57 +107,70 @@ struct InitialPreferencesView: View {
                             
                     }
                     
-                    Section{
-                        HStack{
-                            Spacer()
-                            Button {
-                                showModal = true
-                                
-                                preferences.interval = interval
-                                preferences.unit = unit
-                                preferences.waterIntake = waterIntake
-                                preferences.isSoundActive = sound
-                                preferences.isRecurring = recurring
-                                
-                                print("\(interval) \(initialActiveHours) \(preferences.activeDuration) \(finalActiveHours) \(unit) \(waterIntake) \(sound) \(recurring)")
-                            } label: {
-                                Text("Save")
-                                    .fontWeight(.bold)
-                                    .font(.callout)
-                                    .frame(width: 100, height: 45, alignment: .center)
-                                    .background(Color("WaterBlue"))
-                                    .cornerRadius(8)
-                            }
-                            .sheet(isPresented: $showModal) {
-                                ZStack{
-                                    Color("WaterBlue")
-                                        .ignoresSafeArea()
-                                VStack {
-                                    
-                                    ModalView(biodata: biodata, preferences: preferences)
-                                        .frame(height: 600)
-                                    
-                                    Button {
-                                        showModal = false
-                                    } label: {
-                                        Text("👍  Sip!")
-                                    }
-                                    .fontWeight(.bold)
-                                    .font(.system(size: 20))
-                                    .frame(width: 100, height: 20)
-                                    .padding()
-                                    .background(Color.white)
-                                    .foregroundStyle(Color("WaterBlue"))
-                                    .cornerRadius(15)
-                                    }
-                                }
-                            }
-                            Spacer()
-                        }
-                    }
-                    .listSectionSpacing(100)
-                    .listRowBackground(Color("WaterBlue").opacity(0))
-                    .foregroundStyle(Color.white)
+//                    Section{
+//                        HStack{
+//                            Spacer()
+//                            Button {
+//                                showModal = true
+//                                
+//                                preferences.interval = interval
+//                                preferences.unit = unit
+//                                preferences.waterIntake = waterIntake
+//                                preferences.isSoundActive = sound
+//                                preferences.isRecurring = recurring
+//                                
+//                                print("\(interval) \(initialActiveHours) \(preferences.activeDuration) \(finalActiveHours) \(unit) \(waterIntake) \(sound) \(recurring)")
+//                            } label: {
+//                                Text("Save")
+//                                    .fontWeight(.bold)
+//                                    .font(.callout)
+//                                    .frame(width: 100, height: 45, alignment: .center)
+//                                    .background(Color("WaterBlue"))
+//                                    .cornerRadius(8)
+//                            }
+//                            .sheet(isPresented: $showModal, onDismiss: {
+//                                moveToHome = true
+//                            }) {
+//                                NavigationStack{
+//                                    ZStack{
+//                                        Color("WaterBlue")
+//                                            .ignoresSafeArea()
+//                                        VStack {
+//                                            
+//                                            ModalView(biodata: biodata, preferences: preferences)
+//                                                .frame(height: 600)
+//                                            
+//                                            Button {
+//                                                showModal = false
+//                                            } label: {
+//                                                Text("👍  Sip!")
+//                                            }
+//                                            .fontWeight(.bold)
+//                                            .font(.system(size: 20))
+//                                            .frame(width: 100, height: 20)
+//                                            .padding()
+//                                            .background(Color.white)
+//                                            .foregroundStyle(Color("WaterBlue"))
+//                                            .cornerRadius(15)
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            .background{
+//                                NavigationLink(
+//                                    destination: ContentView(biodata: biodata, preferences: preferences).environmentObject(timerManager)
+//                                        .environmentObject(viewModel),
+//                                    isActive: $moveToHome,
+//                                    label: { EmptyView() }
+//                                )
+//                                .hidden()
+//                            }
+//                            Spacer()
+//                        }
+//                    }
+//                    .listSectionSpacing(100)
+//                    .listRowBackground(Color("WaterBlue").opacity(0))
+//                    .foregroundStyle(Color.white)
                     
                 }
                 .listSectionSpacing(50)

@@ -13,13 +13,14 @@ import Combine
 struct ContentView: View {
     
     @State private var showModal = false
+    @State var preferences = Preferences()
     
     var body: some View {
         NavigationStack {
             ZStack {
                 Color("BackgroundYellow")
                     .ignoresSafeArea(.all)
-                WaterGlassView()
+                WaterGlassView(preferences: preferences)
                 TimerView()
                 GoalView()
             }
@@ -72,6 +73,7 @@ struct ContentView: View {
             }
         }
     }
+    
     func requestNotificationPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
             DispatchQueue.main.async {
@@ -138,6 +140,9 @@ struct Trapezium: Shape {
 }
 
 struct WaterGlassView: View {
+    @State var biodata = Biodata()
+    @State var preferences = Preferences()
+    
     @State private var waveOffset: CGFloat = 0.0
     @State private var waterLevelOffset: CGFloat = 30 // default starts at 30 to add space top
     @EnvironmentObject var timerManager: TimerManager
@@ -147,18 +152,21 @@ struct WaterGlassView: View {
         ZStack {
 
             VStack {
+                Rectangle()
+                    .fill(Color.red.opacity(0))
+                    .frame(width: 30, height: 60)
                 Spacer()
                 
                 ZStack {
                     // Glass Shape
                     Trapezium()
-                        .fill(Color.white.opacity(0.2))
+                        .fill(Color.backgroundBlue)
                         .frame(width: 150, height: 300)
                         .overlay(
                             Trapezium()
-                                .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                                .stroke(Color.backgroundBlue.opacity(1), lineWidth: 2)
                         )
-                        .shadow(radius: 5)
+                        .shadow(color: Color.deepWaterBlue.opacity(0.3), radius: 5)
 
 
                     // Water Shape with Animation
@@ -178,21 +186,23 @@ struct WaterGlassView: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(Color("WaterBlue"))
-                        .frame(width:100, height: 65)
+                        .frame(width:120, height: 65)
                     Text("Sip!")
-                        .bold(true)
                         .foregroundStyle(.white)
+                        .font(.system(size: 25))
+                        .fontWeight(.heavy)
                 }
                 .onTapGesture {
                     print("Sip! Pressed")
                     withAnimation {
-                        waterLevelOffset += 10 // TODO: replace with unit per drink water
-                        if waterLevelOffset > 270 { //TODO: replace with max water
-                            waterLevelOffset = 280
+                        var offsetChange = (preferences.sipCapacity / Double(preferences.waterIntake)) * 270
+                        waterLevelOffset += offsetChange
+                        if waterLevelOffset > 270 {
+                            waterLevelOffset = Double(preferences.waterIntake)
                         }
                     }
-                    timerManager.startCountdown()
-                    viewModel.addProgress()
+                    timerManager.startCountdown(preferences: preferences)
+                    viewModel.addProgress(preferences: preferences)
                 }
                 Spacer()
             }
@@ -202,6 +212,7 @@ struct WaterGlassView: View {
                 waveOffset = .pi * 2
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -247,6 +258,7 @@ struct TimerView: View {
                    .font(.largeTitle)
                    .bold()
                    .foregroundColor(Color("DeepWaterBlue"))
+                   .padding(.top, 40)
                Spacer()
            }
        }
@@ -265,21 +277,22 @@ struct GoalView: View {
     var body: some View {
         VStack(spacing: 20) {
             Text("\(viewModel.currentProgress) / \(viewModel.goalTarget)")
-                .font(.subheadline)
+                .font(.system(size: 18))
                 .bold()
                 .foregroundColor(Color("DeepWaterBlue"))
-            }
+                .padding(.top, 70)
+        }
         .padding()
     }
 }
 
 class TimerManager: ObservableObject {
-    @Published var timeRemaining: Int = 10800
+    @Published var timeRemaining: Int = 0
     private var timer: Timer?
 
-    func startCountdown() {
+    func startCountdown(preferences: Preferences) {
         timer?.invalidate()
-        timeRemaining = 10800
+        timeRemaining = preferences.interval * 60
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -297,18 +310,23 @@ class TimerManager: ObservableObject {
 }
 
 class GoalViewModel: ObservableObject {
+    
     @Published var intervalProgress: Int = 300
     @Published var currentProgress: Int = 0
     @Published var goalTarget: Int = 2700
 
-    func addProgress() {
+    func addProgress(preferences: Preferences) {
+        goalTarget = preferences.waterIntake
+        intervalProgress = Int(preferences.sipCapacity)
+        
         if currentProgress < goalTarget {
             currentProgress += intervalProgress
         }
     }
 
-    func resetProgress() {
+    func resetProgress(preferences: Preferences) {
         currentProgress = 0
+        goalTarget = preferences.waterIntake
     }
 }
 
