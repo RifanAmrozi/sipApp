@@ -12,8 +12,6 @@ import Combine
 
 struct ContentView: View {
     
-    @State private var showModal = false
-    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -25,6 +23,15 @@ struct ContentView: View {
             }
             .toolbarBackground(Color("BackgroundYellow"), for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                        NavigationLink(destination: HistoryView()) {
+                            Image(systemName: "calendar")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 30, height: 30)
+                                .padding()
+                        }
+                    }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     VStack{
                         NavigationLink(destination: MenuView()) {
@@ -32,40 +39,7 @@ struct ContentView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 30, height: 30)
-                        }
-                        .padding(.top)
-                        Button(action: {
-                            showModal = true
-                            print("About Clicked")
-                        }) {
-                            Image(systemName: "questionmark.circle")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 30, height: 30)
-                        }
-                        .sheet(isPresented: $showModal) {
-                            ZStack{
-                                Color("WaterBlue")
-                                    .ignoresSafeArea()
-                            VStack {
-                                
-                                ModalView()
-                                    .frame(height: 600)
-                                
-                                Button {
-                                    showModal = false
-                                } label: {
-                                    Text("👍  Sip!")
-                                }
-                                .fontWeight(.bold)
-                                .font(.system(size: 20))
-                                .frame(width: 100, height: 20)
                                 .padding()
-                                .background(Color.white)
-                                .foregroundStyle(Color("WaterBlue"))
-                                .cornerRadius(15)
-                                }
-                            }
                         }
                     }
                 }
@@ -261,6 +235,7 @@ struct TimerView: View {
 
 struct GoalView: View {
     @EnvironmentObject var viewModel: GoalViewModel
+    @State private var showModal = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -268,6 +243,33 @@ struct GoalView: View {
                 .font(.subheadline)
                 .bold()
                 .foregroundColor(Color("DeepWaterBlue"))
+                .onTapGesture {
+                    showModal = true
+                }
+                .sheet(isPresented: $showModal) {
+                    ZStack{
+                        Color("WaterBlue")
+                            .ignoresSafeArea()
+                    VStack {
+
+                        ModalView()
+                            .frame(height: 600)
+
+                        Button {
+                            showModal = false
+                        } label: {
+                            Text("👍  Sip!")
+                        }
+                        .fontWeight(.bold)
+                        .font(.system(size: 20))
+                        .frame(width: 100, height: 20)
+                        .padding()
+                        .background(Color.white)
+                        .foregroundStyle(Color("WaterBlue"))
+                        .cornerRadius(15)
+                        }
+                    }
+                }
             }
         .padding()
     }
