@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct PreferencesView: View {
-    @State var interval: Int = 0
-    @State var initialActiveHours: Date = Date.now
-    @State var finalActiveHours: Date = Date.now
+    @State var interval: Int = 30
+    @State var initialActiveHours: Date = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date())!
+    @State var finalActiveHours: Date = Calendar.current.date(bySettingHour: 17, minute: 0, second: 0, of: Date())!
     @State var unit: String = ""
     @State var waterIntake: Int = 0
     @State var sound: Bool = false
@@ -183,9 +183,8 @@ struct PreferencesView: View {
                     ToolbarItem(placement: .principal) {
                         Text("Preferences")
                             .font(.title)
-                            .foregroundColor(Color.black)
+                            .foregroundColor(Color("WaterBlue"))
                             .fontWeight(.heavy)
-                            .padding(.top, 50)
                     }
                 }
                 .alert("Discard unsaved changes?", isPresented: $showDiscardAlert) {

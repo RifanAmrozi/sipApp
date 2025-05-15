@@ -13,11 +13,14 @@ struct InitialBiodataView: View {
     
     @State var name: String
     @State var weight: Int
+    @State var inpWeight: String = ""
     @State var age: Int
+    @State var inpAge: String = ""
     @State var selectedGender: String
     @State var fasting: Bool
-    
     @State var showModal = false
+    @FocusState private var isWeightFocused: Bool
+    @FocusState private var isAgeFocused: Bool
     
     
     let genders = ["Not Set", "Male", "Female"]
@@ -43,10 +46,24 @@ struct InitialBiodataView: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                TextField("\(biodata.weight)", value: $weight, format: .number)
-                                    .frame(width: 50, height: 10)
-                                    .multilineTextAlignment(.trailing)
-                                    .foregroundColor(.gray)
+                                TextField("0", text: $inpWeight)
+                                        .keyboardType(.numberPad)
+                                        .frame(width: 60, height: 30)
+                                        .multilineTextAlignment(.trailing)
+                                        .foregroundColor(.gray)
+                                        .focused($isWeightFocused)
+                                        .onTapGesture {
+                                            if inpWeight == "0" {
+                                                inpWeight = ""
+                                            }
+                                        }
+                                        .onChange(of: inpWeight) {
+                                            // Sanitize input to allow digits only
+                                            inpWeight = inpWeight.filter { $0.isNumber }
+
+                                            // Update actual numeric value
+                                            weight = Int(inpWeight) ?? 0
+                                        }
                             }
                             Text("kg")
                         }
@@ -54,10 +71,24 @@ struct InitialBiodataView: View {
                             Text("Age")
                                 .foregroundColor(.gray)
                             Spacer()
-                            TextField("\(biodata.age)", value: $age, format: .number)
-                                .frame(width: 200, height: 10)
+                            TextField("0", text: $inpAge)
+                                .keyboardType(.numberPad)
+                                .frame(width: 60, height: 30)
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.gray)
+                                .focused($isAgeFocused)
+                                .onTapGesture {
+                                    if inpAge == "0" {
+                                        inpAge = ""
+                                    }
+                                }
+                                .onChange(of: inpAge) {
+                                    // Sanitize input to allow digits only
+                                    inpAge = inpAge.filter { $0.isNumber }
+
+                                    // Update actual numeric value
+                                    age = Int(inpAge) ?? 0
+                                }
                             Text("yrs")
                         }
                         HStack{
@@ -76,13 +107,13 @@ struct InitialBiodataView: View {
                                 
                             }
                         }
-                        HStack{
-                            Text("Fasting")
-                                .foregroundColor(.gray)
-                            Spacer()
-                            Toggle("", isOn: $fasting)
-                                .toggleStyle(SwitchToggleStyle(tint: .cyan))
-                        }
+//                        HStack{
+//                            Text("Fasting")
+//                                .foregroundColor(.gray)
+//                            Spacer()
+//                            Toggle("", isOn: $fasting)
+//                                .toggleStyle(SwitchToggleStyle(tint: .cyan))
+//                        }
                     }
                     Section{
                         HStack{
@@ -110,9 +141,8 @@ struct InitialBiodataView: View {
                     ToolbarItem(placement: .principal) {
                         Text("Biodata")
                             .font(.title)
-                            .foregroundColor(Color.black)
+                            .foregroundColor(Color("WaterBlue"))
                             .fontWeight(.heavy)
-                            .padding(.top, 50)
                     }
                 }
 
