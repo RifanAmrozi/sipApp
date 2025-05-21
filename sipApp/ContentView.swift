@@ -276,12 +276,12 @@ struct GoalView: View {
 }
 
 class TimerManager: ObservableObject {
-    @Published var timeRemaining: Int = 10800
+    @Published var timeRemaining: Int = 1800
     private var timer: Timer?
 
     func startCountdown() {
         timer?.invalidate()
-        timeRemaining = 10800
+        timeRemaining = 1800
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -303,16 +303,51 @@ class GoalViewModel: ObservableObject {
     @Published var currentProgress: Int = 0
     @Published var goalTarget: Int = 2700
 
+    private let storage = ProgressStorage()
+
     func addProgress() {
         if currentProgress < goalTarget {
             currentProgress += intervalProgress
+            saveProgress()
         }
     }
 
     func resetProgress() {
         currentProgress = 0
     }
+
+    private func saveProgress() {
+        let now = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let todayString = formatter.string(from: now)
+
+        var allProgress = storage.load()
+
+        // Check if there's already a record for today
+        if let index = allProgress.firstIndex(where: {
+            formatter.string(from: $0.date) == todayString
+        }) {
+            // Update existing entry
+            allProgress[index].total = currentProgress
+            allProgress[index].target = goalTarget
+            allProgress[index].times.append(currentTime())
+        } else {
+            // Create new entry
+            let newProgress = DailyProgress(date: now, total: currentProgress, target: goalTarget, times: [currentTime()])
+            allProgress.append(newProgress)
+        }
+
+        storage.save(allProgress)
+    }
+
+    private func currentTime() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: Date())
+    }
 }
+
 
 #Preview {
     ContentView()

@@ -18,6 +18,7 @@ struct InitialPreferencesView: View {
     @State var waterIntake: Int = 0
     @State var sound: Bool = false
     @State var recurring: Bool = false
+    @State var activeDuration: Int = 30
     
     @State var showModal = false
     
@@ -105,15 +106,42 @@ struct InitialPreferencesView: View {
                     
                     Section{
                         HStack{
+                            NavigationLink(destination: ContentView()
+                                .environmentObject(TimerManager())
+                                .environmentObject(GoalViewModel())
+                                .navigationBarBackButtonHidden(true)
+                            ) {
+                                Spacer()
+                                Text("Next")
+                                    .fontWeight(.bold)
+                                    .font(.callout)
+                                    .frame(width: 100, height: 45, alignment: .center)
+                                    .background(Color("WaterBlue"))
+                                    .cornerRadius(8)
+                                    .frame(width: 500)
+                                Spacer()
+                            }
                             Spacer()
                             Button {
                                 showModal = true
-                                
+//                                if(interval==0){
+//                                    interval=1
+//                                }
                                 preferences.interval = interval
                                 preferences.unit = unit
                                 preferences.waterIntake = waterIntake
                                 preferences.isSoundActive = sound
                                 preferences.isRecurring = recurring
+//                                let activeDuration = finalActiveHours-initialActiveHours
+//                                if(activeDuration==0){
+//                                    activeDuration=1
+//                                }
+                                preferences.activeDuration = activeDuration
+//                                preferences.sipCapacity = Double(preferences.waterIntake)/( Double(preferences.activeDuration)/Double(preferences.interval))
+////
+//                                if (preferences.unit == "kg/mL"){
+//                                    preferences.sipCapacityGlass = Double(preferences.sipCapacity) / 240
+//                                }
                                 
                                 print("\(interval) \(initialActiveHours) \(preferences.activeDuration) \(finalActiveHours) \(unit) \(waterIntake) \(sound) \(recurring)")
                             } label: {
@@ -171,6 +199,13 @@ struct InitialPreferencesView: View {
                 
             }
         }
+        .onAppear{
+            interval = preferences.interval
+            waterIntake = preferences.waterIntake
+            recurring = preferences.isRecurring
+            sound = preferences.isSoundActive
+            unit = preferences.unit
+        }
         .background(.gray)
     }
 }
@@ -178,3 +213,4 @@ struct InitialPreferencesView: View {
 #Preview {
     InitialPreferencesView()
 }
+

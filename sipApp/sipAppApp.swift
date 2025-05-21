@@ -14,9 +14,10 @@ struct sipAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(timerManager)
-                .environmentObject(viewModel)
+//            ContentView()
+//                .environmentObject(timerManager)
+//                .environmentObject(viewModel)
+            InitialBiodataView(name: "", weight: 0, age: 0, selectedGender: "Not Set", fasting: false)
         }
     }
 }

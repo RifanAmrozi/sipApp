@@ -48,7 +48,7 @@ struct BiodataView: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                TextField("0", text: $inpWeight)
+                                TextField("\(biodata.weight)", text: $inpWeight)
                                         .keyboardType(.numberPad)
                                         .frame(width: 60, height: 30)
                                         .multilineTextAlignment(.trailing)
@@ -73,7 +73,7 @@ struct BiodataView: View {
                             Text("Age")
                                 .foregroundColor(.gray)
                             Spacer()
-                            TextField("0", text: $inpAge)
+                            TextField("\(biodata.age)", text: $inpAge)
                                 .keyboardType(.numberPad)
                                 .frame(width: 60, height: 30)
                                 .multilineTextAlignment(.trailing)
@@ -92,22 +92,6 @@ struct BiodataView: View {
                                     age = Int(inpAge) ?? 0
                                 }
                             Text("yrs")
-                        }
-                        HStack{
-                            Text("Gender")
-                                .foregroundColor(.gray)
-                            Spacer()
-                            VStack{
-                                Picker("", selection: $biodata.gender){
-                                    ForEach(genders, id: \.self){
-                                        Text($0)
-                                    }
-                                }
-                                .multilineTextAlignment(.trailing)
-                                .foregroundColor(.gray)
-                                .frame(width: 200, height: 10)
-                                
-                            }
                         }
                     }
                     Section{

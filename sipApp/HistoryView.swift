@@ -7,23 +7,12 @@
 
 import SwiftUI
 
-struct DailyProgress {
-    let date: Date
-    let total: Int       // e.g., 2500
-    let target: Int      // e.g., 2700
-    let times: [String]  // e.g., ["08:26", "08:56"]
-    
-    var percentage: CGFloat {
-        guard target > 0 else { return 0 }
-        return CGFloat(total) / CGFloat(target)
-    }
-}
 
+let storage = ProgressStorage()
 
 struct HistoryView: View {
     @State private var selectedDate = Date()
-
-    let progressData: [DailyProgress] = generateMockProgress()
+    @State private var progressData: [DailyProgress] = []
 
     var body: some View {
         NavigationStack {
@@ -36,12 +25,16 @@ struct HistoryView: View {
                 CustomCalendarView(selectedDate: $selectedDate, progressData: progressData)
                 
                 // Keterangan
-                Text(InfoDate(selectedDate))
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color("BackgroundBlue"))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
+//                Text(InfoDate(selectedDate))
+//                    .padding()
+//                    .frame(maxWidth: .infinity)
+//                    .background(Color("BackgroundBlue"))
+//                    .cornerRadius(10)
+//                    .padding(.horizontal)
+                let progress = getProgress(for: selectedDate)
+
+                DailyProgressCard(date: selectedDate, value: progress.amount, total: progress.target)
+
                 
                 // Timeline Diagram
                 TimelineView(times: timesForSelectedDate(selectedDate))
@@ -57,7 +50,19 @@ struct HistoryView: View {
                         .fontWeight(.heavy)
                 }
             }
+        }.onAppear {
+            loadData()
         }
+    }
+    func loadData() {
+            storage.seedIfEmpty()
+            progressData = storage.load()
+    }
+    func getProgress(for date: Date) -> (amount: Int, target: Int) {
+        if let progress = progressData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }) {
+            return (Int(progress.total), Int(progress.target))
+        }
+        return (0, 2700)
     }
 
     func InfoDate(_ date: Date) -> String {
@@ -159,7 +164,7 @@ struct TimelineView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Timeline")
+            Text("Water Intake on This Day")
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .center)
 
@@ -198,30 +203,6 @@ struct TimelineView: View {
             }
         }
     }
-}
-
-
-
-
-func generateMockProgress() -> [DailyProgress] {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd"
-
-    return [
-        DailyProgress(date: formatter.date(from: "2025-05-19")!, total: 2700, target: 2700, times: ["08:26", "08:56"]),
-        DailyProgress(date: formatter.date(from: "2025-05-18")!, total: 1800, target: 2700, times: ["09:10"]),
-        DailyProgress(date: formatter.date(from: "2025-05-17")!, total: 1200, target: 2700, times: ["07:45", "10:20", "13:00"]),
-        DailyProgress(date: formatter.date(from: "2025-05-16")!, total: 2700, target: 2700, times: ["08:00"]),
-        DailyProgress(date: formatter.date(from: "2025-05-15")!, total: 1800, target: 2700, times: ["08:26"
-                                                                                                    , "08:56"
-                                                                                                    ,"09:26"
-                                                                                                    ,"09:56","10:26", "10:56"
-                                                                                                   ]),
-        DailyProgress(date: formatter.date(from: "2025-05-14")!, total: 1200, target: 2700, times: ["11:30", "15:15"]),
-        DailyProgress(date: formatter.date(from: "2025-05-13")!, total: 2700, target: 2700, times: ["08:00"]),
-        DailyProgress(date: formatter.date(from: "2025-05-12")!, total: 1800, target: 2700, times: []),
-        DailyProgress(date: formatter.date(from: "2025-05-11")!, total: 2700, target: 2700, times: ["11:30", "15:15"])
-    ]
 }
 
 

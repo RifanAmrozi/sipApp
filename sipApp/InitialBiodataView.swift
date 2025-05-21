@@ -22,6 +22,8 @@ struct InitialBiodataView: View {
     @FocusState private var isWeightFocused: Bool
     @FocusState private var isAgeFocused: Bool
     
+    @State var moveToPreferences: Bool = false
+    
     
     let genders = ["Not Set", "Male", "Female"]
     
@@ -46,7 +48,7 @@ struct InitialBiodataView: View {
                                 .foregroundColor(.gray)
                             Spacer()
                             VStack{
-                                TextField("0", text: $inpWeight)
+                                TextField("\(biodata.weight)", text: $inpWeight)
                                         .keyboardType(.numberPad)
                                         .frame(width: 60, height: 30)
                                         .multilineTextAlignment(.trailing)
@@ -71,7 +73,7 @@ struct InitialBiodataView: View {
                             Text("Age")
                                 .foregroundColor(.gray)
                             Spacer()
-                            TextField("0", text: $inpAge)
+                            TextField("\(biodata.age)", text: $inpAge)
                                 .keyboardType(.numberPad)
                                 .frame(width: 60, height: 30)
                                 .multilineTextAlignment(.trailing)
@@ -91,22 +93,22 @@ struct InitialBiodataView: View {
                                 }
                             Text("yrs")
                         }
-                        HStack{
-                            Text("Gender")
-                                .foregroundColor(.gray)
-                            Spacer()
-                            VStack{
-                                Picker("", selection: $selectedGender){
-                                    ForEach(genders, id: \.self){
-                                        Text($0)
-                                    }
-                                }
-                                .multilineTextAlignment(.trailing)
-                                .foregroundColor(.gray)
-                                .frame(width: 200, height: 10)
-                                
-                            }
-                        }
+//                        HStack{
+//                            Text("Gender")
+//                                .foregroundColor(.gray)
+//                            Spacer()
+//                            VStack{
+//                                Picker("", selection: $selectedGender){
+//                                    ForEach(genders, id: \.self){
+//                                        Text($0)
+//                                    }
+//                                }
+//                                .multilineTextAlignment(.trailing)
+//                                .foregroundColor(.gray)
+//                                .frame(width: 200, height: 10)
+//                                
+//                            }
+//                        }
 //                        HStack{
 //                            Text("Fasting")
 //                                .foregroundColor(.gray)
@@ -117,7 +119,21 @@ struct InitialBiodataView: View {
                     }
                     Section{
                         HStack{
-                            NavigationLink(destination: InitialPreferencesView(biodata: biodata, preferences: preferences)) {
+                            Button{
+                                biodata.name = name
+                                biodata.weight = weight
+                                biodata.age = age
+                                biodata.gender = selectedGender
+                                biodata.isFasting = fasting
+                                
+                                preferences.waterIntake = weight * 30
+                                preferences.interval = 30
+//                                preferences.sipCapacity = (Double(preferences.interval) / Double(preferences.activeDuration)) * Double(preferences.waterIntake)
+//                                
+//                                if (preferences.unit == "kg/mL"){
+//                                    preferences.sipCapacityGlass = Double(preferences.sipCapacity) / 240
+//                                }
+                            } label: {
                                 Spacer()
                                 Text("Next")
                                     .fontWeight(.bold)
@@ -127,6 +143,11 @@ struct InitialBiodataView: View {
                                     .cornerRadius(8)
                                     .frame(width: 500)
                                 Spacer()
+                            }
+                            .background{
+                                NavigationLink(destination: InitialPreferencesView(biodata: biodata, preferences: preferences), isActive: $moveToPreferences) {
+                                    EmptyView()
+                                }
                             }
                         }
                     }
